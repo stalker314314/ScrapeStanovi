@@ -57,11 +57,13 @@ def get_stan_data(http, stan_id):
         elif elem.text == 'Terasa': balcon = 1
         elif elem.text == 'U izgradnji': under_construction = 1
         else: raise Exception('Unknown property %s' % elem.text)
+        
+    description = soup.select('div.detail-description > p')[0].text
     stan_data = {'id': stan_id, 'id_source': 1, 'title': title, 'url': url, 'published_date': published_date, 'modified_date': modified_date, 'type': stan_type, 'price': price,
                  'area': area, 'city': city, 'municipality': municipality, 'part': part, 'street': street, 'floor': floor, 'total_floors': total_floors, 'rooms': rooms,
                  'construction_year': construction_year, 'legalized': legalized, 'elevator': elevator, 'sewer': sewer, 'intercom': intercom, 'phone': phone,
                  'heating_type_id': heating_type_id, 'balcon': balcon, 'basement': basement, 'cable_tv': cable_tv, 'aircondition': aircondition, 'internet': internet,
-                 'parking': parking, 'useljivo': useljivo, 'new_building': new_building, 'under_construction': under_construction, 'description': ''}
+                 'parking': parking, 'useljivo': useljivo, 'new_building': new_building, 'under_construction': under_construction, 'description': description}
     return stan_data
 
 def parse_page(soup):
