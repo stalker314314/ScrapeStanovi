@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from common import upsert_stan, DB_SERVER, DB_NAME, DB_USERNAME, DB_PASSWORD
 import datetime
 from urllib import parse
+from concurrent.futures.thread import ThreadPoolExecutor
 
 HEATING_TYPE_DICT = {'CG': 1, 'EG': 2, 'TA': 3, 'mermerni radijatori': 4, 'gas': 5, 'podno': 6, 'norveški radijatori': 7, 'kaljeva peć':8}
 
@@ -166,6 +167,7 @@ def process_stan(cnx, http, stan_id):
 if __name__ == '__main__':
     http = urllib3.PoolManager()
     cnx = pyodbc.connect('DRIVER={SQL Server};SERVER=%s;DATABASE=%s;UID=%s;PWD=%s' % (DB_SERVER, DB_NAME, DB_USERNAME, DB_PASSWORD))
-    for stan_id in get_stan_ids(http):
-        process_stan(cnx, http, stan_id)
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        for stan_id in get_stan_ids(http):
+            executor.submit(process_stan, cnx, http, stan_id)
     cnx.close()
